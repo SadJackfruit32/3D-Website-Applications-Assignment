@@ -1,0 +1,3 @@
+access privileges set to 'anyone with link'
+Link - https://docs.google.com/document/d/1YTzC0WF_s-k-BA1O65lZB1DbsbzUz-LEa86R2NK5GJo/edit?usp=sharing
+*** Contains assortment of screenshots of random progress made throughout the development of the website ***

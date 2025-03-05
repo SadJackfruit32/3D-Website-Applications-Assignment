@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- WEBSITE STYLE CONTENTS -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: scroll;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding-top: 30px;
+        }
+        #scene-container {
+            width: 100%;
+            height: 60vh; 
+            max-width: 80vw; 
+            margin: 30px auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-container {
+            margin-top: 20px;
+        }
+        button {
+            margin: 10px;
+        }
+        .footer-center {
+            display: flex;
+            flex-direction: column;  
+            align-items: center;   
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #333;
+        }
+        .footer-left {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            padding: 30px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #333;
+        }
+        .documentation-image {
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .documentation-image2 {
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .documentation-image3 {
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .documentation-image4 {
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .text-container {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+
+    <!-- WEBSITE CONTAINERS -->
+<body>
+    <!-- Title and Description Container -->
+    <div class="container">
+        <h1>3D WEB APPLICATIONS RENDERS</h1>
+        <p>3 blender exported renders each consisting of different interactive elements and features "Student ID - 266432"</p>
+
+        <!-- Buttons Container -->
+        <div class="btn-container">
+            <button id="render1Button" class="btn btn-primary">View Render 1</button>
+            <button id="render2Button" class="btn btn-secondary">View Render 2</button>
+            <button id="render3Button" class="btn ">View Render 3</button>
+            <button id="toggleLight" class="btn btn-warning">Toggle Light</button>
+            <button id="changeSeasonButton" class="btn btn-success">Change Season</button>
+            <button id="playAnimation" class="btn tbn-info">Play Animation</button>
+            <button id="resetCameraButton" class="btn btn-info">Reset Camera</button>
+            <button id="toggleWireframeButton">Toggle Wireframe</button>
+            <button id="returnToRenders" class="btn btn-info">Return to Renders</button>
+            
+        </div>
+    </div>
+    <div id="scene-container"></div>
+    <div class="footer">
+        <p id="footer-description"></p>
+        <button id="documentationOnRender" class="btn btn-primary">Render Documentation</button>
+    </div>
+
+    <!-- WEBSITE SETUP -->    
+ <script>
+        let render1Selected = false;
+        let render2Selected = false;
+        let render3Selected = false;
+
+        let animations = [];
+
+        let mixer; 
+        let scene, camera, renderer, MinecraftRenderModel, controls;
+        let pointLight, pointLight02, pointLight03, pointLight04, pointLight05, lightGlow, lightGlow02, lightGlow03, lightGlow04, lightGlow05;
+
+        // Footer descriptions
+        const descriptions = {
+        "model_1": {
+            text: "This render showcases a Minecraft house with lighting effects, creating a warm and cozy atmosphere.",
+        },
+        "model_2": {
+            text: "This render showcases a Minecraft tree with dynamic seasonal changes, reflective lighting, and falling leaf particle effects, representing seasons and their moods.",
+        },
+        "model_3": {
+            text: "This render showcases a Minecraft entity, the frog. Complete with a short animation, and custom textures, the entity catches fireflies whilst resting on a lily pad.",
+        },
+
+        "render_1_documentation": {
+            text: "Constructing a minecraft world within blender took its challanges, the use of .OBJ and .WAVE files allowed for the design and importing of basic modeled assets such as the 'blocks' which were then designed and placed accordingly. The inspiration for the build was taken from my personal interest in the game 'Minecraft' as well as desert related scenes such as tundras which are primarily composed of sandy like enviroments, with sporadic greenery. Such enviroments are present within 'Minecraft' and are refered to as biomes, the desert biome is what this blender design has been encouraged by. Using a resource pack and color pallet with emphasis on dry, yellowish textures allowed me to represent a desert themed build. \n\n The use of texture swappers in blender, allowed the installation of pre-made minecraft resource packs to be utilised for the asset textures for each of the 'blocks' turning a rather still and colorless blender asset into a somewhat more completed version of itself.\n\n\n\n",
+            image: "assets/images/render_1_documentation(1).png",
+            image2: "assets/images/render_1_documentation(2).png",
+        },
+        
+        "render_1_documentation_02": {
+            text2: "In order to add more life to the render, light sources were introduced as an interactive feature. There are a total of 5 light sources rendered into the scene and have been added in locations that add to the design of the build such that it appears there are lamps around the 'houses' that illuminate their surroundings. The toggle light feature has a specific program which is called upon to flicker the lights occasionally when toggled and another program which flickers them rapidly simulating a burst of power before a cut when toggled off.\n\nIssues arised when transforming the blender objects into a gbl, the compatible format for renders to be displayed within HTML and Javascript languages, that particle effects and light sources do not transfer due to incompatabilities and lack of support, thus light sources were programmed with javascript within the website itself.",
+            image3: "assets/images/render_1_documentation(3).png",
+            image4: "assets/images/render_1_documentation(4).png"
+        },
+
+        "render_2_documentation": {
+            text: "The seasonal tree build consists of a generic tree design with multiple branching barks and plenty of leaves, a similar process to that of the hanging house was utilised to import assets, design, texture, and layer the blender objects. Inspiration for the tree design came from my personal liking to 'birch trees' and similar designs as well as how effectively white can contrast on vibrant colours such as those represented by the seasons. Features that introduced interactability with the render includes being given the option to change the season in which the tree is set in, which will change the leaves color pallet to the respective season. Aditionally, leave particle effects were introduced as a passive automatic feature, giving an extra touch of detail to the design of the render itself. The particle colors for the leaves will also change in accordance to the color of the leaves.",
+            image: "assets/images/render_2_documentation(1).png",
+            image2: "assets/images/render_2_documentation(2).png"
+        },
+
+        "render_2_documentation_02": {
+            text2: "A challange faced during the design of the tree was implementing more detail to the leaves, initially, it was planned to give leaves depth by introducing additional interior textures to the otherwise hollow object however this proved to yield inconsistencies when transfered to a .gbl format. For which, a new design consisting of 4 planes with backface culling and double sided textures of the leaves were intersected and enlarged slightly more than that of the original leaf object. By doing so, the leaves gained a more textured surface with minimal additions and performance drain.",
+            image4: "assets/images/render_2_documentation(3).png",
+            image3: "assets/images/render_2_documentation(4).png"
+        },
+
+        "render_3_documentation": {
+            text: "The 3rd render consists of an animated frog in a set enviroment. The inspiration came from one of the more recent updates as of the development of this website for minecraft which introduced both a new entity, the 'Frog' as well as some passive particle effects which simulate that of 'Fireflies'. For this render specifically, my challange was to attempt to learn how to use keyframing and different animation techniques within blender with the designed frog and its enviroment. \n\nThe animation consists of fireflies moving around a generalised area and the frog catching one of them once they get too close. The frog then proceeds to catching and eating the firefly. The animation consists of roughly 500 frames with 22 specified keyframes. ",
+            image: "assets/images/render_3_documentation(1).png",
+            image2: "assets/images/render_3_documentation(2).png"
+        },
+
+        "render_3_documentation_02": {
+            text2: "Keyframing, general animation through scaling, dragging, and applying effects such as sheens and textures through UV mapping all imposed issues and challanges. After some changes, keyframes appeared much smoother, and animations gave a good representation of the frogs behaviour in such an enviroment. A singular light source was added above the frog to help illuminate and provide a faint dim glowing appearance throughout the render.",
+            image3: "assets/images/render_3_documentation(3).png",
+            image4: "assets/images/render_3_documentation(4).png"
+
+        }
+        };
+
+        // Blender Model Pathways
+        const model_1_path = 'assets/blender/Lights_On_Minecraft_Hanging_House.glb';
+        const model_2_path = 'assets/blender/Minecraft_Season_Tree.glb';
+        const model_3_path = 'assets/blender/Frog.glb';
+
+        // Audio Sound Effects
+        const frog_audio_sound_effect = 'assets/audio/frog-sound-effects.mp3'
+        const nature_sound_effects = 'assets/audio/nature-sound-effects.mp3'
+        const town_ambience_sound_effect = 'assets/audio/town-ambience.mp3'
+        const flickering_lights_sound_effect = 'assets/audio/flickering-lights.mp3'
+
+        let currentlyPlayingAudio = null;
+
+        // Camera Reset Vectors
+        const defaultCameraPosition = new THREE.Vector3(25, 0, 0);
+        const defaultCameraTarget = new THREE.Vector3(0, 0, 0);
+
+        function init() {
+            // Startup Hidden Features
+            document.getElementById('toggleWireframeButton').style.display = "none";
+            document.getElementById('documentationOnRender').style.display = "none";
+            document.getElementById('returnToRenders').style.display = "none";
+            document.getElementById('changeSeasonButton').style.display = "none";
+            document.getElementById('toggleLight').style.display = "none";
+            document.getElementById('playAnimation').style.display = "none";
+
+            // Ensures visual aspects of the website are rendered or hidden depending on interactions
+            document.getElementById('documentationOnRender').addEventListener('click', function () {
+                document.getElementById('toggleWireframeButton').style.display = "none";
+                document.getElementById('render1Button').style.display = "none";
+                document.getElementById('toggleLight').style.display = "none";
+                document.getElementById('render2Button').style.display = "none";
+                document.getElementById('changeSeasonButton').style.display = "none";
+                document.getElementById('render3Button').style.display = "none";
+                document.getElementById('resetCameraButton').style.display = "none";
+                document.getElementById('documentationOnRender').style.display = "none";
+                document.getElementById('returnToRenders').style.display = "inline-block";
+                document.getElementById('playAnimation').style.display = "none";
+
+                // Debug
+                console.log("render 1 selected: " + render1Selected);
+
+                // Loader documentation
+                if (render1Selected) {
+                    updateFooterDescription('render_1_documentation', true, true)
+                    updateFooterDescription02('render_1_documentation_02', true, true)
+                }
+
+                if (render2Selected) {
+                    updateFooterDescription('render_2_documentation', true, true)
+                    updateFooterDescription02('render_2_documentation_02', true, true)
+                }
+
+                if (render3Selected) {
+                    updateFooterDescription('render_3_documentation', true, true)
+                    updateFooterDescription02('render_3_documentation_02', true, true)
+                }
+            })
+
+            document.getElementById('returnToRenders').addEventListener('click', function () {
+                document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                document.getElementById('render1Button').style.display = "inline-block";
+                document.getElementById('toggleLight').style.display = "inline-block";
+                document.getElementById('render2Button').style.display = "inline-block";
+                document.getElementById('changeSeasonButton').style.display = "inline-block";
+                document.getElementById('render3Button').style.display = "inline-block";
+                document.getElementById('resetCameraButton').style.display = "inline-block";
+                document.getElementById('documentationOnRender').style.display = "inline-block";
+                document.getElementById('returnToRenders').style.display = "none";
+
+                // Documentation unloader
+                if (render1Selected) {
+                    updateFooterDescription('model_1', false, false)
+                    document.getElementById('toggleLight').style.display = "inline-block";
+                    document.getElementById('resetCameraButton').style.display = "inline-block";
+                    document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                    document.getElementById('changeSeasonButton').style.display = "none";
+                    document.getElementById('playAnimation').style.display = "none";
+                }
+                if (render2Selected) {
+                    updateFooterDescription('model_2', false, false)
+                    document.getElementById('changeSeasonButton').style.display = "inline-block";
+                    document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                    document.getElementById('resetCameraButton').style.display = "inline-block";
+                    document.getElementById('toggleLight').style.display = "none";
+                    document.getElementById('playAnimation').style.display = "none";
+                }                    
+                if (render3Selected) {
+                    updateFooterDescription('model_3', false, false)
+                    document.getElementById('changeSeasonButton').style.display = "none";
+                    document.getElementById('toggleLight').style.display = "none";
+                    document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                    document.getElementById('resetCameraButton').style.display = "inline-block";
+                    document.getElementById('playAnimation').style.display = "inline-block";
+                }
+            })
+
+            document.getElementById('render1Button').addEventListener('click', function () {
+                stopCurrentAudio();
+                soundEffectLoader(town_ambience_sound_effect, true);
+                render1Selected = true;
+                render2Selected = false;
+                render3Selected = false;
+
+                // Debug
+                console.log(render1Selected);
+                console.log(render2Selected);
+                console.log(render3Selected);
+                
+                // 1st Render Loader
+                loadModelWithAnimation(model_1_path);
+                updateFooterDescription('model_1', false, false);
+                document.getElementById('toggleLight').style.display = "inline-block";
+                document.getElementById('changeSeasonButton').style.display = "none";
+                document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                document.getElementById('documentationOnRender').style.display = "inline-block";
+                document.getElementById('playAnimation').style.display = "none";
+
+                visibilityLightsFalseRender2();
+                leafMaterial.visible = false;
+                resetCameraView();
+                visibilityLightsFalseRender3();
+            });
+
+            document.getElementById('render2Button').addEventListener('click', function () {
+                stopCurrentAudio();
+                soundEffectLoader('assets/audio/nature-sound-effects.mp3', true);
+
+                render2Selected = true;
+                render1Selected = false;
+                render3Selected = false;
+                
+                // Debug
+                console.log(render1Selected);
+                console.log(render2Selected);
+                console.log(render3Selected);
+
+                // 2nd Render Loader
+                loadModelWithAnimation(model_2_path);
+                document.getElementById('toggleLight').style.display = "none";
+                document.getElementById('changeSeasonButton').style.display = "inline-block";
+                document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                document.getElementById('documentationOnRender').style.display = "inline-block";
+                document.getElementById('playAnimation').style.display = "none";
+
+                visibilityLightsFalseRender1();
+                pointLightRender2.visible = true;
+                lightGlowRender2.visible = true;
+                renderer.toneMappingExposure = 1.8;
+                initLeaves();
+                leafMaterial.visible = false;
+                console.log(currentSeason);
+                updateFooterDescription('model_2', false, false);
+                resetCameraView();
+                visibilityLightsFalseRender3();
+                renderer.toneMappingExposure = 1.2;
+            });
+
+            document.getElementById('render3Button').addEventListener('click', function () {
+                stopCurrentAudio();
+                render3Selected = true;
+                render2Selected = false;
+                render1Selected = false;
+
+                // Debug
+                console.log(render1Selected);
+                console.log(render2Selected);
+                console.log(render3Selected);
+
+                // 3rd Render Loader
+                loadModelWithAnimation(model_3_path);
+                document.getElementById('toggleLight').style.display = "none";
+                document.getElementById('changeSeasonButton').style.display = "none";
+                document.getElementById('documentationOnRender').style.display = "inline-block"
+                document.getElementById('toggleWireframeButton').style.display = "inline-block";
+                document.getElementById('playAnimation').style.display = "inline-block";
+
+                pointLightRender3.visible = true;;
+                lightGlowRender3.visible = false;
+                //print.log(pointLightRender3.visible)
+                camera.position.set(5, 5, -7);
+                camera.rotation.set(0, 0, 0);
+                camera.lookAt(new THREE.Vector3(0, 0, 0));
+                updateFooterDescription('model_3', false, false);
+                visibilityLightsFalseRender2();
+                visibilityLightsFalseRender1();
+                leafMaterial.visible = false;
+                document.getElementById('documentationOnRender').style.display = "inline-block";
+            })
+
+            // Play animation function caller
+            document.getElementById('playAnimation').addEventListener('click', function() {
+                playAnimation();
+                soundEffectLoader(frog_audio_sound_effect, false);
+            });
+
+            // Caller for functions used by wireframe feature
+            document.getElementById('toggleWireframeButton').addEventListener('click', function() {
+                toggleWireframe();
+            });
+
+            // Caller for functions used by season change feature
+            document.getElementById('changeSeasonButton').addEventListener('click', () => {
+                changeSeasonColor();
+                changeSeasonLeaves();
+                leafMaterial.visible = true
+            });
+
+            // Light Toggler
+            document.getElementById('toggleLight').addEventListener('click', function() {
+                toggleLights();
+                soundEffectLoader(flickering_lights_sound_effect, false);
+            }); 
+
+            // Camera Reset
+            document.getElementById('resetCameraButton').addEventListener('click', resetCameraView);
+
+            // Scene Builder
+            const container = document.getElementById('scene-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x575757);
+
+            // Viewer
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(25, 0, 0);
+
+            // Scene Rendering
+            // Setting scene width and height proportions
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Shadows
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0x202020);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            container.appendChild(renderer.domElement);
+
+            // Ambient light to the scene for model
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); 
+            scene.add(ambientLight);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffa500, 
+                transparent: true,
+                opacity: 0.3 
+            });
+
+            // Viewer Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 5;
+            controls.maxDistance = 50;
+
+            // POINT LIGHT RENDER 1
+            pointLight = new THREE.PointLight(0xff8c00, 1.8, 10, 2); 
+            pointLight.position.set(0.7, -9.8, -4.8);
+            pointLight.castShadow = true;
+            pointLight.visible = false;
+            scene.add(pointLight);
+            lightGlow = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlow.position.copy(pointLight.position);
+            scene.add(lightGlow);
+
+            // POINT LIGHT02 RENDER 1
+            pointLight02 = new THREE.PointLight(0xff8c00, 1.8, 10, 2); 
+            pointLight02.position.set(-0.5, -8.8, 14.3);
+            pointLight02.castShadow = true;
+            pointLight02.visible = false;
+            scene.add(pointLight02);
+            lightGlow02 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlow02.position.copy(pointLight02.position);
+            scene.add(lightGlow02);
+
+            // POINT LIGHT03 RENDER 1
+            pointLight03 = new THREE.PointLight(0xff8c00, 2, 20, 2); 
+            pointLight03.position.set(-1.3, 3.3, -11);
+            pointLight03.castShadow = true;
+            pointLight03.visible = false;
+            scene.add(pointLight03);
+            lightGlow03 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlow03.position.copy(pointLight03.position);
+            scene.add(lightGlow03);
+
+            // POINT LIGHT04 RENDER 1
+            pointLight04 = new THREE.PointLight(0xff8c00, 1.8, 10, 2); 
+            pointLight04.position.set(-1.3, -1.6, 1.1);
+            pointLight04.castShadow = true;
+            pointLight04.visible = false;
+            scene.add(pointLight04);
+            lightGlow04 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlow04.position.copy(pointLight04.position);
+            scene.add(lightGlow04);
+
+            // POINT LIGHT05 RENDER 1
+            pointLight05 = new THREE.PointLight(0xff8c00, 1.8, 10, 2); 
+            pointLight05.position.set(-1.3, -1.6, -2.6);
+            pointLight05.castShadow = true;
+            pointLight05.visible = false;
+            scene.add(pointLight05);
+            lightGlow05 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlow05.position.copy(pointLight05.position);
+            scene.add(lightGlow05);
+
+            // POINT LIGHT RENDER 2
+            pointLightRender2 = new THREE.PointLight(0xff8c00, 5, 50, 2);
+            pointLightRender2.position.set(10, 20, -10);
+            pointLightRender2.castShadow = true;
+            pointLightRender2.visible = false;
+            pointLightRender2.shadow.mapSize.width = 2048;
+            pointLightRender2.shadow.mapSize.height = 2048;
+            scene.add(pointLightRender2);
+            lightGlowRender2 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlowRender2.position.copy(pointLightRender2.position);
+            scene.add(lightGlowRender2);
+
+            // POINT LIGHT RENDER 3
+            pointLightRender3 = new THREE.PointLight(0xff8c00, 5, 7, 2);
+            pointLightRender3.position.set(0, 3, 0);
+            pointLightRender3.castShadow = true;
+            pointLightRender3.visible = false;
+            pointLightRender3.shadow.mapSize.width = 2048;
+            pointLightRender3.shadow.mapSize.height = 2048;
+            scene.add(pointLightRender3);
+            lightGlowRender3 = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), glowMaterial);
+            lightGlowRender3.position.copy(pointLightRender3.position);
+            scene.add(lightGlowRender3);
+
+            visibilityLightsFalseRender2()
+            visibilityLightsFalseRender1()
+            flickerLight();
+            animate();
+
+            // Debug
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+}
+
+
+// UNIVERSAL FUNCTIONS
+// Loads the blender object, ensures all front and back faces for culling are set to true and is forefully updated to ensure changes are applied after every asset import
+// Loads blender animation in with the model, ensures all front and back faces for culling are set to true and is forefully updated to ensure changes are applied after every asset import
+function loadModelWithAnimation(modelURL) {
+    if (MinecraftRenderModel) {
+        scene.remove(MinecraftRenderModel);
+        MinecraftRenderModel = null;
+    }
+
+    const loader = new THREE.GLTFLoader();
+    loader.load(modelURL, function (gltf) {
+        MinecraftRenderModel = gltf.scene;
+        MinecraftRenderModel.traverse((child) => {
+            if (child.isMesh) {
+                child.material.side = THREE.DoubleSide;
+                child.material.needsUpdate = true;
+            }
+        });
+
+        scene.add(MinecraftRenderModel);
+
+        if (gltf.animations.length > 0) {
+            mixer = new THREE.AnimationMixer(gltf.scene);
+            animations = gltf.animations.map(clip => {
+                const action = mixer.clipAction(clip);
+                action.setLoop(THREE.LoopOnce);
+                action.paused = true;
+                return action;
+            });
+        }
+    });
+}
+
+function playAnimation() {
+    if (mixer && animations.length > 0) {
+        animations.forEach(action => {
+            action.reset();
+            action.paused = false;
+            action.play();
+        });
+    }
+}
+
+
+// Camera View Reset
+function resetCameraView() {
+  gsap.to(camera.position, { 
+      x: defaultCameraPosition.x, 
+      y: defaultCameraPosition.y, 
+      z: defaultCameraPosition.z, 
+      duration: 1, 
+      ease: "camera.out" 
+  });
+
+controls.target.set(defaultCameraTarget.x, defaultCameraTarget.y, defaultCameraTarget.z);
+controls.update();
+}
+
+// Animate Base Function 
+function animate() {
+    requestAnimationFrame(animate);
+    animateLeaves();
+    if (mixer) mixer.update(0.016);
+    controls.update();
+    renderer.render(scene, camera);
+}
+
+// Resizer
+function onWindowResize() {
+  const container = document.getElementById('scene-container');
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+}
+window.addEventListener('resize', onWindowResize);
+window.onload = init;
+
+// Disable light rendering for Render 1
+function visibilityLightsFalseRender1() {
+  pointLight.visible = false;
+  pointLight02.visible = false;
+  pointLight03.visible = false;
+  pointLight04.visible = false;
+  pointLight05.visible = false;
+  lightGlow.visible = false;
+  lightGlow02.visible = false;
+  lightGlow03.visible = false;
+  lightGlow04.visible = false;
+  lightGlow05.visible = false;
+}
+
+function visibilityLightsFalseRender3() {
+    pointLightRender3.visible = false;
+    lightGlowRender3.visible = false;
+}
+
+// Disable light rendering for Render 2
+function visibilityLightsFalseRender2() {
+  pointLightRender2.visible = false;
+  lightGlowRender2.visible = false;
+}
+
+// Wireframe
+let isWireframe = false; 
+function toggleWireframe() {
+    if (MinecraftRenderModel) {
+        // Iteration through every mesh in model
+        MinecraftRenderModel.traverse((child) => {
+            if (child.isMesh) {
+                // When wireframe is toggled, fireframe effect is applied
+                if (isWireframe) {
+                    child.material.wireframe = false; // Disable wireframe
+                    child.material.needsUpdate = true; // Update wireframe
+                } else {
+                    child.material.wireframe = true; // Enable wireframe
+                    child.material.needsUpdate = true; // Update wireframe
+                }
+            }
+        });
+    }
+
+    // Toggle wireframe off to reset flag
+    isWireframe = !isWireframe;
+}
+
+
+// RENDER 1 FUNCTIONS
+// Toggles lights on render 1
+function toggleLights() {
+  const toggleButton = document.getElementById('toggleLight');
+
+  // Toggle lights cooldown start
+  toggleButton.disabled = true;
+  toggleButton.innerText = "Lights Cooling Down...";
+
+  const lights = [pointLight, pointLight02, pointLight03, pointLight04, pointLight05];
+  const glows = [lightGlow, lightGlow02, lightGlow03, lightGlow04, lightGlow05];
+
+  lights.forEach((light, index) => {
+      const glow = glows[index];
+      const delay = index * 0.5; 
+
+      if (light.visible) {
+          gsap.delayedCall(delay, () => {
+              gsap.to(light, { intensity: 0, duration: 1, ease: "lights.out", onComplete: () => (light.visible = false) });
+              gsap.to(glow.material, { opacity: 0, duration: 1, ease: "lights.out", onComplete: () => (glow.visible = false) });
+          });
+      } else {
+          gsap.delayedCall(delay, () => {
+              light.visible = true;
+              glow.visible = true;
+              gsap.to(light, { intensity: 1.8, duration: 1, ease: "lights.out" });
+              gsap.to(glow.material, { opacity: 0.3, duration: 1, ease: "lights.out" });
+          });
+      }
+  });
+
+    // Toggle lights cooldown finished
+    setTimeout(() => {
+        toggleButton.disabled = false;
+        toggleButton.innerText = "Toggle Light"; 
+    }, 4000);
+}
+
+// Toggle Light Flicker
+function flickerLight() {
+    if (pointLight.visible) {
+        let flickerStrength = 1.2 + (Math.random() * 0.3 - 0.15); 
+        let flickerGlow = 0.2 + (Math.random() * 0.15 - 0.07); 
+        gsap.to(pointLight, { intensity: flickerStrength, duration: 0.15, ease: "lights.on" });
+        gsap.to(pointLight02, { intensity: flickerStrength, duration: 0.15, ease: "lights.on" });
+        gsap.to(pointLight03, { intensity: flickerStrength, duration: 0.15, ease: "lights.on" });
+        gsap.to(pointLight04, { intensity: flickerStrength, duration: 0.15, ease: "lights.on" });
+        gsap.to(pointLight05, { intensity: flickerStrength, duration: 0.15, ease: "lights.on" });
+        gsap.to(lightGlow.material, { opacity: flickerGlow, duration: 0.15, ease: "lights.on" });
+    }
+    setTimeout(flickerLight, 100 + Math.random() * 100); 
+}
+
+
+// RENDER 2 FUNCTIONS
+// Seasons
+let currentSeason = 0; 
+// Season cache
+const seasonColors = {
+    0: new THREE.Color(0xAA336A),  
+    1: new THREE.Color(0x3CB371),  
+    2: new THREE.Color(0xFF9900),   
+    3: new THREE.Color(0xA8C6E1)  
+};
+
+
+// Season Changer
+// Selects meshes and changes their colors, meshes are labled as minecraft_block-birch_leaves objects so the model is traversed and all respective meshes are selected for modifications
+function changeSeasonColor() {
+    const toggleButton = document.getElementById('changeSeasonButton');
+    toggleButton.disabled = true;
+    toggleButton.innerText = "Changing Seasons...";
+
+    const seasonNames = ['0', '1', '2', '3'];
+    const nextSeason = seasonNames[currentSeason % 4];
+    const targetColor = seasonColors[nextSeason];
+
+    if (MinecraftRenderModel) {
+        MinecraftRenderModel.traverse((child) => {
+            if (child.isMesh && child.material && child.material.name === 'minecraft_block-birch_leaves') {
+                const currentColor = child.material.color;
+
+                gsap.to(currentColor, {
+                    r: targetColor.r,
+                    g: targetColor.g,
+                    b: targetColor.b,
+                    duration: 6, 
+                    ease: "power2.in"
+                });
+            }
+        });
+    }
+
+    // Updates point lights to given color pallet to match seasons
+    gsap.to(pointLightRender2.color, {
+        r: targetColor.r,
+        g: targetColor.g,
+        b: targetColor.b,
+        duration: 6, 
+        ease: "fade.in"
+    });
+
+    // Flickering effect
+    gsap.to(pointLightRender2, {
+        intensity: 6,
+        repeat: 3,
+        duration: 0.3    });
+
+    // Iteration through season cache
+    currentSeason++;
+
+    // Cooldown effect on button (Prevent spam)
+    setTimeout(() => {
+        toggleButton.disabled = false;
+        toggleButton.innerText = "Change Season";
+    }, 5000);
+}
+
+
+// Leaf particle system setup
+let leafParticles = [];
+let leafMaterial;
+let leavesGroup;
+
+// Spawn point for particle spawners
+const spawnPoints = [
+    new THREE.Vector3(-2, 0, 5),
+    new THREE.Vector3(-1, 0, -5),
+    new THREE.Vector3(0, 0, 0),
+];
+
+// Creates the meshes for the leaves and sets the color of the particles
+function initLeaves() {
+    leafMaterial = new THREE.MeshBasicMaterial({
+        color: seasonLeafColors, // Default to spring color
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.7
+    });
+
+    leavesGroup = new THREE.Group();
+    scene.add(leavesGroup);
+
+    // Create leaves as planes
+    for (let i = 0; i < 8; i++) {
+        createLeaf();
+    }
+}
+
+// System to determine amount of leaves, spawning, and randomness generators for realism effect on spawning patterns and locations
+function createLeaf() {
+    const geometry = new THREE.PlaneGeometry(0.22, 0.22);
+    
+    // Leaf spawn
+    const leafCount = Math.floor(Math.random() * 3) + 1;
+
+    for (let i = 0; i < leafCount; i++) {
+        const leaf = new THREE.Mesh(geometry, leafMaterial);
+        const baseSpawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+
+        // Generate randomness
+        const angle = Math.random() * Math.PI * 2; 
+        const radius = Math.random() * 3; 
+        const offsetX = Math.cos(angle) * radius;
+        const offsetZ = Math.sin(angle) * radius;
+        const offsetY = (Math.random() - 0.5) * 1.5; 
+
+        leaf.position.set(
+            baseSpawnPoint.x + offsetX, 
+            baseSpawnPoint.y + offsetY, 
+            baseSpawnPoint.z + offsetZ
+        );
+
+        // Random rotation
+        leaf.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+        // Falling leaves (some leaves fall faster than others)
+        const fallSpeed = 0.01 + Math.random() * 0.02;
+        const fallDirection = new THREE.Vector3(0, -1, 0).normalize();
+
+        leaf.userData = { fallSpeed, fallDirection };
+        leavesGroup.add(leaf);
+        leafParticles.push(leaf);
+    }
+}
+
+function animateLeaves() {
+    leafParticles.forEach(leaf => {
+        leaf.position.addScaledVector(leaf.userData.fallDirection, leaf.userData.fallSpeed);
+
+        // Reset leaf when it falls below given marker
+        if (leaf.position.y < -10) {
+            leaf.position.y = 10; // border line
+            leaf.position.x = spawnPoints[Math.floor(Math.random() * spawnPoints.length)].x;
+            leaf.position.z = spawnPoints[Math.floor(Math.random() * spawnPoints.length)].z;
+        }
+    });
+}
+
+const seasonLeafColors = {
+    0: 0xAA336A,
+    1: 0x093414,
+    2: 0xFF9900,
+    3: 0xA8C6E1
+};
+
+let currentSeasonLeaf = 0; 
+
+function changeSeasonLeaves() {
+    const seasonNames = ['0', '1', '2', '3'];
+    const nextSeason = seasonNames[currentSeasonLeaf % 4];
+    const targetColor = seasonLeafColors[nextSeason]; // Get corresponding color
+
+    // Update the material color for all leaves
+    leafMaterial.color.set(targetColor);
+    currentSeasonLeaf++; 
+}
+
+function updateFooterDescription(modelType, doesItUseImage, useLeftLayout = true) {
+    const footerDescription = document.getElementById("footer-description");
+    const footerContainer = document.querySelector(".footer");  
+    const descriptionData = descriptions[modelType];
+
+    if (useLeftLayout) {
+        footerContainer.classList.remove("footer-center");
+        footerContainer.classList.add("footer-left");
+    } else {
+        footerContainer.classList.remove("footer-left");
+        footerContainer.classList.add("footer-center");
+    }
+
+    // Clear content
+    footerDescription.innerHTML = "";
+
+    // div creation 
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.alignItems = "center";
+    wrapper.style.gap = "20px";
+
+    // Load images from assets
+    if (doesItUseImage && descriptionData.image) {
+        const img = document.createElement("img");
+        img.src = descriptionData.image;
+        img.alt = `${modelType} image`;
+        img.classList.add("documentation-image");
+
+        img.onload = function () {
+            wrapper.appendChild(img);
+        };
+    }
+
+    if (doesItUseImage && descriptionData.image2) {
+        const img = document.createElement("img");
+        img.src = descriptionData.image2;
+        img.alt = `${modelType} image2`;
+        img.classList.add("documentation-image2");
+
+        img.onload = function () {
+            wrapper.appendChild(img);
+        };
+    }
+
+    // Create text element
+    const text = document.createElement("p");
+    text.innerText = descriptionData.text;
+    text.style.margin = "0";
+    wrapper.appendChild(text);
+    footerDescription.appendChild(wrapper);
+}
+
+function updateFooterDescription02(modelType, doesItUseImage, useLeftLayout = true) {
+    const footerDescription = document.getElementById("footer-description");
+    const footerContainer = document.querySelector(".footer");  // Get footer element
+    const descriptionData = descriptions[modelType];
+
+    if (useLeftLayout) {
+        footerContainer.classList.remove("footer-center");
+        footerContainer.classList.add("footer-left");
+    } else {
+        footerContainer.classList.remove("footer-left");
+        footerContainer.classList.add("footer-center");
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.alignItems = "center";
+    wrapper.style.gap = "20px";
+
+    if (doesItUseImage && descriptionData.image3) {
+        const img = document.createElement("img");
+        img.src = descriptionData.image3;
+        img.alt = `${modelType} image3`;
+        img.classList.add("documentation-image3");
+
+        img.onload = function () {
+            wrapper.appendChild(img);
+        };
+    }
+
+    if (doesItUseImage && descriptionData.image4) {
+        const img = document.createElement("img");
+        img.src = descriptionData.image4;
+        img.alt = `${modelType} image4`;
+        img.classList.add("documentation-image4");
+
+        img.onload = function () {
+            wrapper.appendChild(img);
+        };
+    }
+
+    const text = document.createElement("p");
+    text.innerText = descriptionData.text2;
+    text.style.margin = "0";
+
+    wrapper.appendChild(text);
+    footerDescription.appendChild(wrapper);
+}
+
+// Sound effect loader
+function soundEffectLoader(audioPathway, loop = false) {
+    if (currentlyPlayingAudio = true) {
+        currentlyPlayingAudio.pause;
+        currentlyPlayingAudio.currentTime = 0;
+    }
+
+    currentlyPlayingAudio = new Audio(audioPathway);
+    currentlyPlayingAudio.loop = loop;
+    currentlyPlayingAudio.play();
+}
+
+function stopCurrentAudio() {
+    if (currentlyPlayingAudio instanceof Audio) {
+        currentlyPlayingAudio.pause();
+        currentlyPlayingAudio.currentTime = 0;
+        currentlyPlayingAudio = null; 
+    }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+Orbit Controls:
+Link - https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js
+*** Used to allow the user to navigate through rendered scenes on the website ***
+
+Program Inspiration:
+Link - https://threejs.org/docs/#api/en/renderers/WebGLRenderer
+*** Helped with scene render and setup ***
+
+GLTF Loader:
+Link - https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js
+Link - https://threejs.org/docs/#api/en/loaders/AnimationLoader
+*** Used to load .gbl files onto the website ***
+
+Sound Effect Render 1:
+Link - https://www.youtube.com/watch?v=KyMSsFn9utM&ab_channel=SPSoundsChill
+Link - https://www.youtube.com/watch?v=SkaI5XUCw3c&ab_channel=FreeToUseSounds
+*** Seconds used on loop to provide ambience for render ***
+*** Seconds used without loop to provide flickering sound effect for interactive toggle feature in render ***
+
+Sound effect Render 2: 
+Link - https://www.youtube.com/watch?v=xNN7iTA57jM&ab_channel=TheGuildofAmbience
+*** Seconds used on loop to provide ambience for render ***
+
+Sound Effect Render 3:
+Link - https://www.youtube.com/watch?v=uExUxx0rQIY&ab_channel=SoundBlockz
+*** Seconds used without loop to provide frog sound effects for render ***
+
+Program Inspiration:
+Link - https://gist.github.com/natb19/2308158
+*** Helped with flickering light program ***
+
+Program Inspiration:
+Link - https://stackoverflow.com/questions/14834520/html5-audio-stop-function
+*** Helped with sound effects ***
+
+Program Inspiration:
+Link - https://threejs.org/docs/#examples/en/controls/OrbitControls
+*** Helped with orbit controls for navigation of models within the HTML format ***
+
+Program Inspiration:
+Link - https://threejs.org/docs/#api/en/helpers/PointLightHelper
+*** Helped with light sources ***
+
+Program Inspiration:
+Link - https://threejs.org/docs/#api/en/lights/AmbientLight
+Link - https://threejs.org/docs/#api/en/lights/PointLight
+*** Helped with ambient lighting ***
+
+Program Inspiration:
+Link - https://codepen.io/chrisjdesigner/pen/mdBWwoj
+*** Helped with particle system for leaves ***
