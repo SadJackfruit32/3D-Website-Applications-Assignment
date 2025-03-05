@@ -1,0 +1,7 @@
+Frog update - 1.19.0 MC version ("The wild update")
+Frog texture from original minecraft texture assets
+
+Link - https://www.g-portal.com/en/blog/minecraft-update-overview
+
+*** Color gradients have been applied on the .png file to make the colors lighter ***
+

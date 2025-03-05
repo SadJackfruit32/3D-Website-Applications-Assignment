@@ -1,0 +1,7 @@
+Minzus Craft Resource Pack - A minecraft texture pack
+Link - https://www.planetminecraft.com/texture-pack/mizunos-16-craft/
+
+Bare Bones Resource Pack - A minecraft texture pack
+Link - https://www.planetminecraft.com/texture-pack/bare-bones/
+
+*** Not all textures within download have been used, although all textures for textures => assets => blocks have been imported to the .blends regardless ***
